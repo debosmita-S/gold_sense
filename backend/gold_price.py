@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import httpx
 
 FALLBACK_INR_PER_GRAM = 7200.0
-DEFAULT_METALPRICEAPI_KEY = "03fdd3097e7998d11a92f7d2808a6e0b"
+DEFAULT_METALPRICEAPI_KEY = "PUT_MY_DEFAULT_METALPRICEAPI_KEY"
 
 
 async def fetch_gold_price_inr_per_gram() -> tuple[float, str, bool]:
