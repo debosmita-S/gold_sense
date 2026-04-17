@@ -4,7 +4,8 @@ import ImageUploadZone from "../components/ImageUploadZone.jsx";
 import AudioRecorder from "../components/AudioRecorder.jsx";
 import AssessmentCard from "../components/AssessmentCard.jsx";
 import { assess } from "../api/client.js";
-
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 /* ─── Icons ─────────────────────────────────────────────────────────────── */
 function IconArrowLeft() {
   return (
@@ -401,15 +402,47 @@ export default function Assess() {
               <button
                 type="button"
                 onClick={() => {
-                  const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
-                  const u = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = u; a.download = `goldsense-${result.assessment_id}.json`; a.click();
-                  URL.revokeObjectURL(u);
+                  const doc = new jsPDF();
+                  
+                  doc.setFontSize(22);
+                  doc.setTextColor(212, 168, 67);
+                  doc.text("GoldSense AI Assessment Report", 14, 22);
+                  
+                  doc.setFontSize(11);
+                  doc.setTextColor(80, 80, 80);
+                  doc.text(`Assessment ID: ${result.assessment_id}`, 14, 32);
+                  doc.text(`Date: ${new Date(result.timestamp || Date.now()).toLocaleString()}`, 14, 38);
+
+                  doc.autoTable({
+                    startY: 48,
+                    head: [['Metric', 'Analysis Result']],
+                    body: [
+                      ['Jewelry Type', result.vision?.jewelry_type || 'Unknown'],
+                      ['Est. Weight', `${result.weight?.weight_min_g?.toFixed(1) || '?'}g - ${result.weight?.weight_max_g?.toFixed(1) || '?'}g`],
+                      ['Purity Band', result.fusion?.purity_band || 'N/A'],
+                      ['Fraud Risk', result.fusion?.fraud_risk || 'N/A'],
+                      ['Lending Signal', result.fusion?.lending_signal || 'N/A']
+                    ],
+                    theme: 'grid',
+                    headStyles: { fillColor: [212, 168, 67] }
+                  });
+
+                  let finalY = doc.autoTable.previous.finalY;
+                  
+                  doc.setFontSize(14);
+                  doc.setTextColor(40, 40, 40);
+                  doc.text("Explainability & Reasoning", 14, finalY + 14);
+                  
+                  const points = (result.fusion?.explainability_points || []).map(p => `• ${p}`);
+                  doc.setFontSize(10);
+                  doc.setTextColor(80, 80, 80);
+                  doc.text(points, 14, finalY + 22, { maxWidth: 180 });
+                  
+                  doc.save(`goldsense-report-${result.assessment_id}.pdf`);
                 }}
                 className="btn-ghost w-full"
               >
-                Download JSON report
+                Download PDF report
               </button>
               <button
                 type="button"
