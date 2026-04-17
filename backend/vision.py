@@ -1,4 +1,4 @@
-"""MODULE A — Claude Vision analysis."""
+"""MODULE A — Gemini Vision analysis."""
 
 from __future__ import annotations
 
@@ -131,43 +131,25 @@ async def analyze_images(image_paths: list[str]) -> tuple[VisionResult, Optional
     base_quality = "poor" if poor else "good"
 
     try:
-        import anthropic
+        import google.generativeai as genai
 
-        api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+        api_key = os.environ.get("GEMINI_API_KEY", "").strip()
         if not api_key:
-            raise RuntimeError("ANTHROPIC_API_KEY not set")
+            raise RuntimeError("GEMINI_API_KEY not set. Get a free API key at https://aistudio.google.com")
 
-        client = anthropic.Anthropic(api_key=api_key)
-        content: list[dict] = [
-            {
-                "type": "text",
-                "text": "Analyze these jewelry images and respond with ONLY the JSON object specified in your instructions.",
-            }
-        ]
+        genai.configure(api_key=api_key)
+        
+        images = []
         for p in image_paths:
-            raw = Path(p).read_bytes()
-            b64 = base64.standard_b64encode(raw).decode("ascii")
-            content.append(
-                {
-                    "type": "image",
-                    "source": {
-                        "type": "base64",
-                        "media_type": _guess_media_type(p),
-                        "data": b64,
-                    },
-                }
-            )
+            images.append(Image.open(p))
 
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4096,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": content}],
+        model = genai.GenerativeModel(
+            model_name="gemini-flash-latest",
+            system_instruction=SYSTEM_PROMPT
         )
-        text = ""
-        for block in msg.content:
-            if block.type == "text":
-                text += block.text
+        
+        response = model.generate_content(["Analyze these jewelry images and respond with ONLY the JSON object specified in your instructions."] + images)
+        text = response.text
         data = _extract_json(text)
         if not data:
             logger.warning("Could not parse vision JSON: %s", text[:500])

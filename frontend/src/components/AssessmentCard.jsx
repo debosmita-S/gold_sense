@@ -64,6 +64,53 @@ function ScoreChip({ label, pct, color }) {
 /* ─── Calculation Modal ──────────────────────────────────────────────────── */
 function CalculationModal({ fusion, onClose }) {
   const b = fusion?.calculation_breakdown || {};
+  
+  const SECTION_INFO = {
+    purity_confidence: { title: "Purity & Karat Confidence", desc: "Analyzed from surface color and hallmark legibility." },
+    weight_confidence: { title: "Volume-to-Weight Confidence", desc: "Derived from visual size references and thickness." },
+    authenticity_score: { title: "Overall Authenticity", desc: "Combined visual & acoustic probability of genuine gold." },
+    risk_and_signal: { title: "Risk & Decision", desc: "Automated lending flags and fraud risk analysis." },
+    loan_value: { title: "Valuation Metrics", desc: "Pricing details based on real-time gold rates." }
+  };
+
+  const formatKey = (k) => {
+    const map = {
+      vision_color_component: "Visual Color Match",
+      hallmark_boost: "Hallmark Bonus",
+      audio_component: "Acoustic Response",
+      raw_before_fallback: "Initial Base Score",
+      fallback_multiplier: "Missing Data Penalty",
+      final: "Final Score",
+      vision_component: "Visual Authenticity",
+      hallmark_risk_adjustment: "Hallmark Risk Adjustment",
+      fraud_flags_count: "Total Risk Flags",
+      fraud_flags: "Active Flags",
+      fraud_risk: "Risk Level",
+      lending_signal: "Recommended Action",
+      gold_price_per_gram_inr: "Live Gold Rate (₹/g)",
+      gold_price_fallback_used: "Offline Cached Price Use",
+      weight_mid_g: "Midpoint Weight (g)",
+      loan_min_inr: "Suggested Min Loan",
+      loan_max_inr: "Suggested Max Loan",
+    };
+    return map[k] || k.replace(/_/g, " ");
+  };
+
+  const formatVal = (k, v) => {
+    if (Array.isArray(v)) return v.length ? v.map(x => x.replace(/_/g, " ")).join(", ") : "None";
+    if (typeof v === "boolean") return v ? "Yes" : "No";
+    if (typeof v === "number") {
+      if (k.includes("inr") || k.includes("price")) return `₹${Math.round(v).toLocaleString("en-IN")}`;
+      if (k.includes("weight")) return `${v.toFixed(1)}g`;
+      if (k === "fraud_flags_count") return v;
+      if (k.includes("multiplier")) return `x${v.toFixed(2)}`;
+      
+      // Convert raw confidences 0.xxx to percentages
+      return `${Math.round(v * 100)}%`; 
+    }
+    return String(v).replace(/_/g, " ");
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
@@ -71,12 +118,12 @@ function CalculationModal({ fusion, onClose }) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-2xl p-5 shadow-2xl page-enter overflow-auto max-h-[88vh]"
+        className="w-full max-w-2xl rounded-2xl p-5 shadow-2xl page-enter flex flex-col max-h-[88vh]"
         style={{ background: "var(--surface-1)", border: "1px solid rgba(255,255,255,0.09)" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>Score Breakdown</h3>
+        <div className="flex items-center justify-between mb-2 flex-shrink-0">
+          <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>Diagnostic Breakdown</h3>
           <button
             type="button"
             onClick={onClose}
@@ -86,15 +133,39 @@ function CalculationModal({ fusion, onClose }) {
             ✕ Close
           </button>
         </div>
-        <pre
-          className="rounded-xl p-4 text-[11px] overflow-auto"
-          style={{ background: "var(--surface-0)", color: "var(--text-secondary)", lineHeight: 1.6 }}
-        >
-          {JSON.stringify(b, null, 2)}
-        </pre>
-        <p className="mt-3 text-[11px]" style={{ color: "var(--text-muted)" }}>
-          Values computed per assessment from image, audio, and declared data signals.
+        <p className="text-[11px] mb-5 flex-shrink-0" style={{ color: "var(--text-muted)" }}>
+          Clear and simple metrics showing exactly how the AI derived your assessment scores.
         </p>
+        
+        <div className="overflow-y-auto flex-1 space-y-4 pr-1 gs-scrollbar">
+          {Object.entries(b).map(([key, section]) => {
+            const info = SECTION_INFO[key] || { title: key.replace(/_/g, " "), desc: "" };
+            const isObj = section && typeof section === "object" && !Array.isArray(section);
+            const components = isObj ? section.components || section : {};
+            
+            return (
+              <div key={key} className="rounded-xl p-4" style={{ background: "var(--surface-0)", border: "1px solid rgba(255,255,255,0.04)" }}>
+                <div className="mb-3.5">
+                  <h4 className="text-[13px] font-bold" style={{ color: "var(--text-primary)" }}>
+                    {info.title}
+                  </h4>
+                  {info.desc && <p className="text-[10px] mt-0.5" style={{ color: "var(--text-muted)" }}>{info.desc}</p>}
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
+                  {Object.entries(components).map(([cKey, cVal]) => (
+                    <div key={cKey} className="flex justify-between items-center text-[11.5px] pb-1" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                      <span style={{ color: "var(--text-muted)" }}>{formatKey(cKey)}</span>
+                      <span className="font-semibold text-right max-w-[50%] truncate capitalize" style={{ color: "var(--gold-light)" }} title={String(cVal)}>
+                        {formatVal(cKey, cVal)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -4,8 +4,8 @@ import ImageUploadZone from "../components/ImageUploadZone.jsx";
 import AudioRecorder from "../components/AudioRecorder.jsx";
 import AssessmentCard from "../components/AssessmentCard.jsx";
 import { assess } from "../api/client.js";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 /* ─── Icons ─────────────────────────────────────────────────────────────── */
 function IconArrowLeft() {
   return (
@@ -413,7 +413,7 @@ export default function Assess() {
                   doc.text(`Assessment ID: ${result.assessment_id}`, 14, 32);
                   doc.text(`Date: ${new Date(result.timestamp || Date.now()).toLocaleString()}`, 14, 38);
 
-                  doc.autoTable({
+                  autoTable(doc, {
                     startY: 48,
                     head: [['Metric', 'Analysis Result']],
                     body: [
@@ -427,7 +427,7 @@ export default function Assess() {
                     headStyles: { fillColor: [212, 168, 67] }
                   });
 
-                  let finalY = doc.autoTable.previous.finalY;
+                  let finalY = doc.lastAutoTable.finalY || 100;
                   
                   doc.setFontSize(14);
                   doc.setTextColor(40, 40, 40);
