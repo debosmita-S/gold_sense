@@ -6,13 +6,13 @@ import Demo from "./pages/Demo.jsx";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div style={{ minHeight: "100vh", background: "var(--surface-0)" }}>
       <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/assess" element={<Assess />} />
+        <Route path="/"          element={<Landing />} />
+        <Route path="/assess"    element={<Assess />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/demo" element={<Demo />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/demo"      element={<Demo />} />
+        <Route path="*"          element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   );

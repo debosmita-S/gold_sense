@@ -1,22 +1,18 @@
-const styles = {
-  PRE_APPROVE: "bg-emerald-500/20 text-emerald-300 ring-emerald-500/40",
-  NEEDS_VERIFICATION: "bg-amber-500/20 text-amber-200 ring-amber-500/40",
-  REJECT: "bg-red-500/20 text-red-200 ring-red-500/40",
-};
-
-const labels = {
-  PRE_APPROVE: "PRE-APPROVE",
-  NEEDS_VERIFICATION: "NEEDS VERIFICATION",
-  REJECT: "REJECT",
+const CONFIG = {
+  PRE_APPROVE:        { bg: "rgba(52,211,153,0.1)",  color: "#6EE7B7", ring: "rgba(52,211,153,0.25)",  label: "Pre-Approve" },
+  NEEDS_VERIFICATION: { bg: "rgba(212,168,67,0.1)",  color: "#FCD34D", ring: "rgba(212,168,67,0.25)", label: "Needs Verification" },
+  REJECT:             { bg: "rgba(239,68,68,0.1)",   color: "#FCA5A5", ring: "rgba(239,68,68,0.25)",  label: "Reject" },
 };
 
 export default function LendingSignalBadge({ signal }) {
-  const cls = styles[signal] || styles.NEEDS_VERIFICATION;
+  const c = CONFIG[signal] || CONFIG.NEEDS_VERIFICATION;
   return (
     <span
-      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ring-1 ${cls}`}
+      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide"
+      style={{ background: c.bg, color: c.color, boxShadow: `0 0 0 1px ${c.ring}` }}
     >
-      {labels[signal] || signal}
+      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: c.color }} />
+      {c.label}
     </span>
   );
 }

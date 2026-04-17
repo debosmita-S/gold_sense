@@ -1,7 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
+/* ─── Design Tokens ───────────────────────────────────────────────────── */
+:root {
+  --gold:       #D4A843;
+  --gold-light: #F0C060;
+  --gold-dim:   rgba(212,168,67,0.15);
+  --surface-0:  #080C14;
+  --surface-1:  #0D1526;
+  --surface-2:  #111D35;
+  --border:     rgba(255,255,255,0.07);
+  --border-gold: rgba(212,168,67,0.3);
+  --text-primary:   #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted:     #475569;
+  --radius:     12px;
+  --transition: 220ms cubic-bezier(0.4,0,0.2,1);
 }
+
+/* ─── Base ────────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--surface-0);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Animated Background ─────────────────────────────────────────────── */
+.bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(212,168,67,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(99,102,241,0.03) 0%, transparent 60%),
+    var(--surface-0);
+  pointer-events: none;
+}
+
+/* ─── Glow Orb (decorative) ────────────────────────────────────────────── */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  animation: orb-drift 12s ease-in-out infinite alternate;
+}
+.orb-gold { background: rgba(212,168,67,0.07); }
+.orb-blue { background: rgba(99,102,241,0.05); }
+
+@keyframes orb-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(20px, -30px) scale(1.05); }
+}
+
+/* ─── Shimmer Skeleton ────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: var(--radius);
+}
+
+/* ─── Counter Animation ───────────────────────────────────────────────── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.counter-animate { animation: count-up 0.5s ease-out forwards; }
+
+/* ─── Card with glow on hover ─────────────────────────────────────────── */
+.gs-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.gs-card:hover {
+  border-color: var(--border-gold);
+  box-shadow: 0 0 0 1px rgba(212,168,67,0.08), 0 8px 32px rgba(0,0,0,0.4);
+  transform: translateY(-1px);
+}
+
+/* ─── Primary Button ──────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #D4A843, #C49030);
+  color: #0D1117;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 20px rgba(212,168,67,0.25);
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 6px 28px rgba(212,168,67,0.38);
+  filter: brightness(1.08);
+}
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.btn-primary:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* ─── Ghost Button ────────────────────────────────────────────────────── */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: transparent;
+  transition: border-color var(--transition), color var(--transition), background var(--transition), transform var(--transition);
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-ghost:hover {
+  border-color: var(--border-gold);
+  color: var(--gold-light);
+  background: var(--gold-dim);
+  transform: translateY(-1px);
+}
+
+/* ─── Input Fields ────────────────────────────────────────────────────── */
+.gs-input {
+  width: 100%;
+  background: var(--surface-0);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: var(--text-primary);
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+.gs-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,168,67,0.12);
+}
+.gs-input::placeholder { color: var(--text-muted); }
+
+/* ─── Upload Zone ─────────────────────────────────────────────────────── */
+.upload-zone {
+  border: 1.5px dashed rgba(255,255,255,0.14);
+  border-radius: 10px;
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  cursor: pointer;
+}
+.upload-zone:hover, .upload-zone.active {
+  border-color: var(--gold);
+  background: rgba(212,168,67,0.04);
+  box-shadow: 0 0 0 3px rgba(212,168,67,0.08);
+}
+
+/* ─── Step Progress Bar ───────────────────────────────────────────────── */
+.step-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+.step-dot.active {
+  background: var(--gold);
+  color: #0D1117;
+  box-shadow: 0 0 0 4px rgba(212,168,67,0.2);
+}
+.step-dot.done {
+  background: rgba(212,168,67,0.2);
+  color: var(--gold-light);
+}
+.step-dot.pending {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-muted);
+}
+.step-line {
+  flex: 1; height: 1px;
+  transition: background var(--transition);
+}
+
+/* ─── Progress Bar Animated ───────────────────────────────────────────── */
+@keyframes progress-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(212,168,67,0.3); }
+  50%       { box-shadow: 0 0 20px rgba(212,168,67,0.6); }
+}
+.progress-bar-fill {
+  background: linear-gradient(90deg, #D4A843, #F0C060);
+  animation: progress-glow 2s ease-in-out infinite;
+  border-radius: 999px;
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+/* ─── Fade-in Page Transition ─────────────────────────────────────────── */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: page-in 0.25s ease-out both; }
+
+/* ─── Badge ───────────────────────────────────────────────────────────── */
+.badge-pre  { background: rgba(52,211,153,0.12); color: #6EE7B7; ring: rgba(52,211,153,0.3); }
+.badge-warn { background: rgba(212,168,67,0.12); color: #FCD34D; ring: rgba(212,168,67,0.3); }
+.badge-ref  { background: rgba(239,68,68,0.12);  color: #FCA5A5; ring: rgba(239,68,68,0.3); }
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212,168,67,0.3); }
+
+/* ─── Select ──────────────────────────────────────────────────────────── */
+select.gs-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* ─── Divider ─────────────────────────────────────────────────────────── */
+.gs-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+/* ─── Trust badge row ─────────────────────────────────────────────────── */
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.trust-badge svg { color: var(--gold); flex-shrink: 0; }

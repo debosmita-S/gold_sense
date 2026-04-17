@@ -2,176 +2,231 @@ import { useState } from "react";
 import LendingSignalBadge from "./LendingSignalBadge.jsx";
 import ConfidenceBar from "./ConfidenceBar.jsx";
 
+/* ─── Utility ────────────────────────────────────────────────────────────── */
 function fmtINR(n) {
   if (n == null || Number.isNaN(n)) return "—";
   return `₹${Math.round(n).toLocaleString("en-IN")}`;
 }
 
+/* ─── Row ────────────────────────────────────────────────────────────────── */
+function Row({ label, value, bar, accent }) {
+  return (
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>{label}</span>
+        <span className="text-sm font-semibold text-right" style={{ color: accent || "var(--text-primary)" }}>
+          {value}
+        </span>
+      </div>
+      {bar != null && (
+        <div className="mt-1.5 flex items-center gap-2">
+          <div className="flex-1 overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,0.06)", height: 5 }}>
+            <div
+              className="h-full rounded-full transition-all duration-700"
+              style={{
+                width: `${bar}%`,
+                background: bar >= 65 ? "linear-gradient(90deg,#34D399,#6EE7B7)"
+                           : bar >= 40 ? "linear-gradient(90deg,#D4A843,#F0C060)"
+                           : "linear-gradient(90deg,#EF4444,#FCA5A5)",
+              }}
+            />
+          </div>
+          <span className="text-[11px] font-medium w-9 text-right" style={{ color: "var(--text-muted)" }}>{bar}%</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Score Chip ─────────────────────────────────────────────────────────── */
+function ScoreChip({ label, pct, color }) {
+  return (
+    <div className="text-center">
+      <div
+        className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full text-lg font-bold"
+        style={{
+          background: `conic-gradient(${color} ${pct * 3.6}deg, rgba(255,255,255,0.05) 0deg)`,
+          color: color,
+        }}
+      >
+        <div
+          className="absolute inset-1.5 rounded-full flex items-center justify-center text-sm font-bold"
+          style={{ background: "var(--surface-1)", color }}
+        >
+          {pct}
+        </div>
+      </div>
+      <p className="mt-2 text-[10px] font-medium" style={{ color: "var(--text-muted)" }}>{label}</p>
+    </div>
+  );
+}
+
+/* ─── Calculation Modal ──────────────────────────────────────────────────── */
+function CalculationModal({ fusion, onClose }) {
+  const b = fusion?.calculation_breakdown || {};
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
+      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-2xl rounded-2xl p-5 shadow-2xl page-enter overflow-auto max-h-[88vh]"
+        style={{ background: "var(--surface-1)", border: "1px solid rgba(255,255,255,0.09)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>Score Breakdown</h3>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-xs transition-opacity hover:opacity-70"
+            style={{ color: "var(--text-muted)" }}
+          >
+            ✕ Close
+          </button>
+        </div>
+        <pre
+          className="rounded-xl p-4 text-[11px] overflow-auto"
+          style={{ background: "var(--surface-0)", color: "var(--text-secondary)", lineHeight: 1.6 }}
+        >
+          {JSON.stringify(b, null, 2)}
+        </pre>
+        <p className="mt-3 text-[11px]" style={{ color: "var(--text-muted)" }}>
+          Values computed per assessment from image, audio, and declared data signals.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main Card ──────────────────────────────────────────────────────────── */
 export default function AssessmentCard({ data, fusion, vision, weight }) {
   if (!fusion) return null;
   const [showCalc, setShowCalc] = useState(false);
 
-  const wPct = Number(((fusion.weight_confidence || 0) * 100).toFixed(1));
-  const pPct = Number(((fusion.purity_confidence || 0) * 100).toFixed(1));
-  const aPct = Number(((fusion.authenticity_score || 0) * 100).toFixed(1));
+  const wPct = Number(((fusion.weight_confidence || 0) * 100).toFixed(0));
+  const pPct = Number(((fusion.purity_confidence || 0) * 100).toFixed(0));
+  const aPct = Number(((fusion.authenticity_score || 0) * 100).toFixed(0));
+  const jt = vision?.jewelry_type?.replace(/^\w/, (c) => c.toUpperCase()) || "—";
 
-  const jt =
-    vision?.jewelry_type?.replace(/^\w/, (c) => c.toUpperCase()) || "—";
+  const FRAUD_COLORS = { LOW: "#6EE7B7", MEDIUM: "#FCD34D", HIGH: "#FCA5A5" };
+  const fraudColor = FRAUD_COLORS[fusion.fraud_risk] || "var(--text-primary)";
 
   return (
-    <div className="rounded-3xl border border-slate-700 bg-slate-900/80 p-5 shadow-xl shadow-black/40">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-bold tracking-tight text-slate-50">
-          Assessment
-        </h2>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowCalc(true)}
-            className="rounded-full border border-slate-600 px-3 py-1 text-xs text-slate-200 hover:border-amber-400"
-            title="See score calculations"
-          >
-            👁 View calculation
-          </button>
-          <LendingSignalBadge signal={fusion.lending_signal} />
-        </div>
-      </div>
-
-      <div className="space-y-3 rounded-2xl border border-slate-700/80 bg-slate-950/50 p-4 text-sm">
-        <Row
-          label="Jewelry type"
-          value={jt}
-          big
-        />
-        <hr className="border-slate-700/80" />
-        <Row
-          label="Weight band"
-          value={`${weight?.weight_min_g?.toFixed(0) ?? "—"}g – ${weight?.weight_max_g?.toFixed(0) ?? "—"}g`}
-          bar={wPct}
-        />
-        <Row
-          label="Purity band"
-          value={fusion.purity_band}
-          bar={pPct}
-        />
-        <Row
-          label="Authenticity"
-          value={
-            fusion.authenticity_score >= 0.65
-              ? "Likely genuine"
-              : fusion.authenticity_score >= 0.4
-                ? "Uncertain"
-                : "High risk"
-          }
-          bar={aPct}
-        />
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-slate-400">Fraud risk</span>
-          <span
-            className={`font-semibold ${
-              fusion.fraud_risk === "LOW"
-                ? "text-emerald-400"
-                : fusion.fraud_risk === "MEDIUM"
-                  ? "text-amber-300"
-                  : "text-red-400"
-            }`}
-          >
-            {fusion.fraud_risk}
-          </span>
-        </div>
-        <hr className="border-slate-700/80" />
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-slate-400">Lending signal</span>
-          <LendingSignalBadge signal={fusion.lending_signal} />
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-slate-400">Est. loan value</span>
-          <span className="font-semibold text-amber-300">
-            {fmtINR(fusion.loan_value_min_inr)} – {fmtINR(fusion.loan_value_max_inr)}
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-5">
-        <ConfidenceBar
-          weightPct={wPct}
-          purityPct={pPct}
-          authPct={aPct}
-        />
-      </div>
-
-      {data?.image_quality === "poor" || vision?.image_quality === "poor" ? (
-        <p className="mt-4 rounded-xl bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
-          Image quality looks poor — please retake photos in good lighting.
-        </p>
-      ) : null}
-
-      {data?.vision_unavailable ? (
-        <p className="mt-3 rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-200">
-          Vision service unavailable — results use reduced confidence fusion.
-        </p>
-      ) : null}
-
-      {showCalc ? (
-        <CalculationModal
-          fusion={fusion}
-          onClose={() => setShowCalc(false)}
-        />
-      ) : null}
-    </div>
-  );
-}
-
-function Row({ label, value, bar, big }) {
-  return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-slate-400">{label}</span>
-        <span
-          className={`text-right font-medium text-slate-100 ${big ? "text-base" : ""}`}
-        >
-          {value}
-        </span>
-      </div>
-      {bar != null ? (
-        <div className="mt-1 flex items-center gap-2">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-800">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-300"
-              style={{ width: `${bar}%` }}
-            />
+    <>
+      <div
+        className="rounded-2xl p-5 shadow-2xl"
+        style={{ background: "var(--surface-1)", border: "1px solid rgba(255,255,255,0.08)" }}
+      >
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div>
+            <p className="text-[10px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: "var(--text-muted)" }}>
+              {jt} · {data?.assessment_id?.slice(0, 8)}
+            </p>
+            <h2 className="text-base font-bold" style={{ color: "var(--text-primary)" }}>Assessment Report</h2>
           </div>
-          <span className="text-xs text-slate-400">{bar}%</span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowCalc(true)}
+              className="btn-ghost text-[11px] px-3 py-1.5"
+            >
+              View scores
+            </button>
+            <LendingSignalBadge signal={fusion.lending_signal} />
+          </div>
         </div>
-      ) : null}
-    </div>
-  );
-}
 
-function CalculationModal({ fusion, onClose }) {
-  const b = fusion?.calculation_breakdown || {};
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 sm:items-center">
-      <div className="max-h-[88vh] w-full max-w-2xl overflow-auto rounded-2xl border border-slate-700 bg-slate-900 p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-100">
-            Score Calculation Breakdown
-          </h3>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-slate-400 hover:text-white"
-          >
-            ✕
-          </button>
+        {/* Score circles */}
+        <div className="flex justify-around mb-5 py-4 rounded-xl" style={{ background: "rgba(255,255,255,0.02)" }}>
+          <ScoreChip label="Weight" pct={wPct} color="#D4A843" />
+          <ScoreChip label="Purity" pct={pPct} color="#38BDF8" />
+          <ScoreChip label="Authenticity" pct={aPct} color="#34D399" />
         </div>
-        <pre className="rounded-xl bg-slate-950 p-3 text-[11px] text-slate-300">
-          {JSON.stringify(b, null, 2)}
-        </pre>
-        <p className="mt-3 text-xs text-slate-400">
-          These values are computed per assessment from uploaded image/audio/declaration signals.
-        </p>
+
+        {/* Data rows */}
+        <div
+          className="rounded-xl p-4 space-y-3"
+          style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}
+        >
+          <Row label="Purity band" value={fusion.purity_band} bar={pPct} />
+          <div className="gs-divider" />
+          <Row
+            label="Weight estimate"
+            value={`${weight?.weight_min_g?.toFixed(1) ?? "—"}g – ${weight?.weight_max_g?.toFixed(1) ?? "—"}g`}
+            bar={wPct}
+          />
+          <div className="gs-divider" />
+          <Row
+            label="Authenticity"
+            value={aPct >= 65 ? "Likely genuine" : aPct >= 40 ? "Uncertain" : "High risk"}
+            bar={aPct}
+          />
+          <div className="gs-divider" />
+          <Row
+            label="Fraud risk"
+            value={fusion.fraud_risk}
+            accent={fraudColor}
+          />
+          <div className="gs-divider" />
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>Est. loan range</span>
+            <span className="text-sm font-bold" style={{ color: "var(--gold-light)" }}>
+              {fmtINR(fusion.loan_value_min_inr)} – {fmtINR(fusion.loan_value_max_inr)}
+            </span>
+          </div>
+        </div>
+
+        {/* Alerts */}
+        {(data?.image_quality === "poor" || vision?.image_quality === "poor") && (
+          <div
+            className="mt-3 rounded-xl px-4 py-3 text-xs"
+            style={{ background: "rgba(212,168,67,0.08)", border: "1px solid rgba(212,168,67,0.2)", color: "#FCD34D" }}
+          >
+            Image quality appears poor — retake photos in better lighting for improved accuracy.
+          </div>
+        )}
+        {data?.vision_unavailable && (
+          <div
+            className="mt-3 rounded-xl px-4 py-3 text-xs"
+            style={{ background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.18)", color: "#FCA5A5" }}
+          >
+            Vision service unavailable — results derived from audio and declared data only.
+          </div>
+        )}
+
+        {/* Fraud flags */}
+        {(fusion.fraud_flags || []).length > 0 && (
+          <div className="mt-3">
+            <p className="text-[10px] uppercase tracking-widest font-semibold mb-2" style={{ color: "var(--text-muted)" }}>
+              Flags
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {fusion.fraud_flags.map((f) => (
+                <span
+                  key={f}
+                  className="text-[11px] font-medium px-2.5 py-1 rounded-full"
+                  style={{ background: "rgba(239,68,68,0.1)", color: "#FCA5A5", border: "1px solid rgba(239,68,68,0.2)" }}
+                >
+                  {f.replace(/_/g, " ")}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Gold price note */}
+        {fusion.gold_price_per_gram_inr && (
+          <p className="mt-4 text-[11px]" style={{ color: "var(--text-muted)" }}>
+            Live gold price: ₹{Math.round(fusion.gold_price_per_gram_inr).toLocaleString("en-IN")}/g
+            {fusion.gold_price_fallback ? " (fallback estimate)" : " (live rate)"}
+          </p>
+        )}
       </div>
-    </div>
+
+      {showCalc && <CalculationModal fusion={fusion} onClose={() => setShowCalc(false)} />}
+    </>
   );
 }

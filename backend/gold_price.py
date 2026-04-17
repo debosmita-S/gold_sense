@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import httpx
 
 FALLBACK_INR_PER_GRAM = 7200.0
-DEFAULT_METALPRICEAPI_KEY = "PUT_MY_DEFAULT_METALPRICEAPI_KEY"
+
 
 
 async def fetch_gold_price_inr_per_gram() -> tuple[float, str, bool]:
@@ -17,7 +17,7 @@ async def fetch_gold_price_inr_per_gram() -> tuple[float, str, bool]:
     Tries goldapi.io then metalpriceapi.com; falls back to mock.
     """
     goldapi_key = os.environ.get("GOLDAPI_IO_KEY", "").strip()
-    metal_key = os.environ.get("METALPRICEAPI_KEY", "").strip() or DEFAULT_METALPRICEAPI_KEY
+    metal_key = os.environ.get("METALPRICEAPI_KEY", "").strip()
 
     async with httpx.AsyncClient(timeout=12.0) as client:
         if goldapi_key:

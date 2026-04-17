@@ -9,6 +9,11 @@ import uuid
 from pathlib import Path
 from typing import List, Optional
 
+# Load .env before any module reads os.environ
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).parent / ".env")
+
 from demo import run_demo_scenario
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
