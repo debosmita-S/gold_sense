@@ -68,7 +68,7 @@ export default function Demo() {
   };
 
   return (
-    <div className="relative min-h-screen page-enter">
+          <div className="relative min-h-screen page-enter">
       <div className="bg-mesh" />
       <div className="relative z-10 mx-auto max-w-lg px-5 pb-24 pt-8 sm:max-w-2xl">
 
@@ -110,7 +110,7 @@ export default function Demo() {
                   </span>
                   <span
                     className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                    style={{ background: "rgba(255,255,255,0.05)", color: EXPECTED_COLOR[s.expected] }}
+                    style={{ background: "var(--surface-0)", color: EXPECTED_COLOR[s.expected] }}
                   >
                     → {s.expected.replace(/_/g, " ")}
                   </span>
@@ -139,14 +139,14 @@ export default function Demo() {
         </div>
 
         {/* Error */}
-        {err && (
-          <div
-            className="mb-6 rounded-xl px-4 py-3 text-xs"
-            style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#FCA5A5" }}
-          >
-            {err}
-          </div>
-        )}
+                {err && (
+                  <div
+                    className="mb-6 rounded-xl px-4 py-3 text-xs"
+                    style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.12)", color: "#FCA5A5" }}
+                  >
+                    {err}
+                  </div>
+                )}
 
         {/* Result */}
         {result && (
@@ -156,10 +156,10 @@ export default function Demo() {
               <LendingSignalBadge signal={result.fusion?.lending_signal} />
             </div>
             <AssessmentCard data={result} fusion={result.fusion} vision={result.vision} weight={result.weight} />
-            <details
-              className="rounded-xl overflow-hidden"
-              style={{ border: "1px solid rgba(255,255,255,0.07)", background: "rgba(13,21,38,0.5)" }}
-            >
+                    <details
+                       className="rounded-xl overflow-hidden"
+                       style={{ border: "1px solid var(--border)", background: "var(--surface-1)" }}
+                     >
               <summary className="cursor-pointer px-4 py-3 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 Explainability
               </summary>

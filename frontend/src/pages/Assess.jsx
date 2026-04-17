@@ -63,7 +63,7 @@ function StepBar({ current }) {
               {i < 2 && (
                 <div
                   className="step-line mx-3 mb-5"
-                  style={{ background: isDone ? "rgba(212,168,67,0.4)" : "rgba(255,255,255,0.07)" }}
+                  style={{ background: isDone ? "rgba(212,168,67,0.4)" : "rgba(31,41,51,0.06)" }}
                 />
               )}
             </div>
@@ -238,7 +238,7 @@ export default function Assess() {
               {/* Details form */}
               <div
                 className="rounded-xl p-4 space-y-4"
-                style={{ background: "rgba(13,21,38,0.5)", border: "1px solid rgba(255,255,255,0.07)" }}
+                style={{ background: "var(--surface-1)", border: "1px solid var(--border)" }}
               >
                 <SectionLabel>Jewelry details</SectionLabel>
 
@@ -342,7 +342,7 @@ export default function Assess() {
             {/* Progress bar */}
             <div
               className="mx-auto mt-8 max-w-xs overflow-hidden rounded-full"
-              style={{ background: "rgba(255,255,255,0.06)", height: 6 }}
+              style={{ background: "rgba(31,41,51,0.06)", height: 6 }}
             >
               <div className="progress-bar-fill" style={{ width: `${((procIdx + 1) / PROCESS_STEPS.length) * 100}%` }} />
             </div>
@@ -356,11 +356,11 @@ export default function Assess() {
                 <li
                   key={s}
                   className="flex items-center gap-2 transition-colors"
-                  style={{ color: i === procIdx ? "var(--gold-light)" : i < procIdx ? "var(--text-muted)" : "rgba(255,255,255,0.15)" }}
+                  style={{ color: i === procIdx ? "var(--gold-light)" : i < procIdx ? "var(--text-muted)" : "rgba(31,41,51,0.35)" }}
                 >
                   <span
                     className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ background: i === procIdx ? "var(--gold)" : i < procIdx ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.06)" }}
+                    style={{ background: i === procIdx ? "var(--gold)" : i < procIdx ? "rgba(31,41,51,0.12)" : "rgba(31,41,51,0.06)" }}
                   />
                   {s}
                 </li>
@@ -382,7 +382,7 @@ export default function Assess() {
             {/* Explainability */}
             <details
               className="mt-4 rounded-xl overflow-hidden"
-              style={{ border: "1px solid rgba(255,255,255,0.07)", background: "rgba(13,21,38,0.5)" }}
+              style={{ border: "1px solid var(--border)", background: "var(--surface-1)" }}
             >
               <summary
                 className="cursor-pointer select-none px-4 py-3 text-sm font-semibold"

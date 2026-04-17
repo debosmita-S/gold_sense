@@ -19,8 +19,8 @@ function Row({ label, value, bar, accent }) {
         </span>
       </div>
       {bar != null && (
-        <div className="mt-1.5 flex items-center gap-2">
-          <div className="flex-1 overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,0.06)", height: 5 }}>
+          <div className="mt-1.5 flex items-center gap-2">
+          <div className="flex-1 overflow-hidden rounded-full" style={{ background: "rgba(31,41,51,0.06)", height: 5 }}>
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{
@@ -45,7 +45,7 @@ function ScoreChip({ label, pct, color }) {
       <div
         className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full text-lg font-bold"
         style={{
-          background: `conic-gradient(${color} ${pct * 3.6}deg, rgba(255,255,255,0.05) 0deg)`,
+          background: `conic-gradient(${color} ${pct * 3.6}deg, transparent 0deg)`,
           color: color,
         }}
       >
@@ -114,12 +114,12 @@ function CalculationModal({ fusion, onClose }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
-      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
+      style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
       onClick={onClose}
     >
       <div
         className="w-full max-w-2xl rounded-2xl p-5 shadow-2xl page-enter flex flex-col max-h-[88vh]"
-        style={{ background: "var(--surface-1)", border: "1px solid rgba(255,255,255,0.09)" }}
+        style={{ background: "var(--surface-1)", border: "1px solid var(--border)" }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-2 flex-shrink-0">
@@ -144,7 +144,7 @@ function CalculationModal({ fusion, onClose }) {
             const components = isObj ? section.components || section : {};
             
             return (
-              <div key={key} className="rounded-xl p-4" style={{ background: "var(--surface-0)", border: "1px solid rgba(255,255,255,0.04)" }}>
+              <div key={key} className="rounded-xl p-4" style={{ background: "var(--surface-0)", border: "1px solid var(--border)" }}>
                 <div className="mb-3.5">
                   <h4 className="text-[13px] font-bold" style={{ color: "var(--text-primary)" }}>
                     {info.title}
@@ -154,7 +154,7 @@ function CalculationModal({ fusion, onClose }) {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
                   {Object.entries(components).map(([cKey, cVal]) => (
-                    <div key={cKey} className="flex justify-between items-center text-[11.5px] pb-1" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                    <div key={cKey} className="flex justify-between items-center text-[11.5px] pb-1" style={{ borderBottom: "1px solid var(--border)" }}>
                       <span style={{ color: "var(--text-muted)" }}>{formatKey(cKey)}</span>
                       <span className="font-semibold text-right max-w-[50%] truncate capitalize" style={{ color: "var(--gold-light)" }} title={String(cVal)}>
                         {formatVal(cKey, cVal)}
@@ -188,7 +188,7 @@ export default function AssessmentCard({ data, fusion, vision, weight }) {
     <>
       <div
         className="rounded-2xl p-5 shadow-2xl"
-        style={{ background: "var(--surface-1)", border: "1px solid rgba(255,255,255,0.08)" }}
+        style={{ background: "var(--surface-1)", border: "1px solid var(--border)" }}
       >
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
@@ -211,7 +211,7 @@ export default function AssessmentCard({ data, fusion, vision, weight }) {
         </div>
 
         {/* Score circles */}
-        <div className="flex justify-around mb-5 py-4 rounded-xl" style={{ background: "rgba(255,255,255,0.02)" }}>
+        <div className="flex justify-around mb-5 py-4 rounded-xl" style={{ background: "var(--surface-0)" }}>
           <ScoreChip label="Weight" pct={wPct} color="#D4A843" />
           <ScoreChip label="Purity" pct={pPct} color="#38BDF8" />
           <ScoreChip label="Authenticity" pct={aPct} color="#34D399" />
@@ -220,7 +220,7 @@ export default function AssessmentCard({ data, fusion, vision, weight }) {
         {/* Data rows */}
         <div
           className="rounded-xl p-4 space-y-3"
-          style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}
+          style={{ background: "var(--surface-0)", border: "1px solid var(--border)" }}
         >
           <Row label="Purity band" value={fusion.purity_band} bar={pPct} />
           <div className="gs-divider" />

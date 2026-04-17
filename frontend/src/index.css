@@ -4,21 +4,34 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Tokens ───────────────────────────────────────────────────── */
+/* ─── Design Tokens (Light Premium Theme) ─────────────────────────────── */
 :root {
-  --gold:       #D4A843;
-  --gold-light: #F0C060;
-  --gold-dim:   rgba(212,168,67,0.15);
-  --surface-0:  #080C14;
-  --surface-1:  #0D1526;
-  --surface-2:  #111D35;
-  --border:     rgba(255,255,255,0.07);
-  --border-gold: rgba(212,168,67,0.3);
-  --text-primary:   #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted:     #475569;
-  --radius:     12px;
-  --transition: 220ms cubic-bezier(0.4,0,0.2,1);
+  --gold:       #C6A85B;
+  --gold-light: #D5BC78;
+  --gold-dim:   rgba(198, 168, 91, 0.1);
+  
+  --surface-0:  #FAF7F2; /* Ivory / Off-white */
+  --surface-1:  #FFFFFF; /* White Cards */
+  --surface-2:  #F2ECD9; /* Slightly darker ivory for hover/accents */
+  
+  --border:     rgba(31, 41, 51, 0.08);
+  --border-gold: rgba(198, 168, 91, 0.3);
+  
+  --text-primary:   #1F2933; /* Deep Charcoal */
+  --text-secondary: #3E4C59;
+  --text-muted:     #616E7C;
+  
+  --success:    #7A9D8C; /* Soft green */
+  --success-bg: rgba(122, 157, 140, 0.15);
+  
+  --warning:    #C6A85B; /* Warning yellow/gold */
+  --warning-bg: rgba(198, 168, 91, 0.15);
+  
+  --danger:     #B76E6E; /* Controlled Red */
+  --danger-bg:  rgba(183, 110, 110, 0.15);
+
+  --radius:     8px;
+  --transition: 180ms cubic-bezier(0.4,0,0.2,1);
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────── */
@@ -32,32 +45,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Animated Background ─────────────────────────────────────────────── */
+/* ─── Analytical Background ───────────────────────────────────────────── */
 .bg-mesh {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(212,168,67,0.04) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(99,102,241,0.03) 0%, transparent 60%),
-    var(--surface-0);
+  background: 
+    linear-gradient(to right, rgba(31, 41, 51, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(31, 41, 51, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
   pointer-events: none;
-}
-
-/* ─── Glow Orb (decorative) ────────────────────────────────────────────── */
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  pointer-events: none;
-  animation: orb-drift 12s ease-in-out infinite alternate;
-}
-.orb-gold { background: rgba(212,168,67,0.07); }
-.orb-blue { background: rgba(99,102,241,0.05); }
-
-@keyframes orb-drift {
-  from { transform: translate(0, 0) scale(1); }
-  to   { transform: translate(20px, -30px) scale(1.05); }
 }
 
 /* ─── Shimmer Skeleton ────────────────────────────────────────────────── */
@@ -67,9 +64,9 @@ body {
 }
 .skeleton {
   background: linear-gradient(90deg,
-    rgba(255,255,255,0.04) 25%,
-    rgba(255,255,255,0.08) 50%,
-    rgba(255,255,255,0.04) 75%
+    rgba(31, 41, 51, 0.04) 25%,
+    rgba(31, 41, 51, 0.08) 50%,
+    rgba(31, 41, 51, 0.04) 75%
   );
   background-size: 800px 100%;
   animation: shimmer 1.6s ease-in-out infinite;
@@ -83,17 +80,18 @@ body {
 }
 .counter-animate { animation: count-up 0.5s ease-out forwards; }
 
-/* ─── Card with glow on hover ─────────────────────────────────────────── */
+/* ─── Professional Card ───────────────────────────────────────────────── */
 .gs-card {
   background: var(--surface-1);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(31,41,51,0.06);
   border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(31,41,51, 0.04);
   transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  padding: 12px;
 }
 .gs-card:hover {
-  border-color: var(--border-gold);
-  box-shadow: 0 0 0 1px rgba(212,168,67,0.08), 0 8px 32px rgba(0,0,0,0.4);
-  transform: translateY(-1px);
+  border-color: rgba(198,168,91,0.14);
+  box-shadow: 0 6px 12px rgba(31,41,51, 0.06);
 }
 
 /* ─── Primary Button ──────────────────────────────────────────────────── */
@@ -102,62 +100,53 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 13px 28px;
-  border-radius: var(--radius);
-  background: linear-gradient(135deg, #D4A843, #C49030);
-  color: #0D1117;
-  font-weight: 700;
-  font-size: 0.875rem;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: var(--surface-1);
+  font-weight: 600;
+  font-size: 0.9rem;
   letter-spacing: 0.01em;
-  box-shadow: 0 4px 20px rgba(212,168,67,0.25);
-  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  transition: transform var(--transition), opacity var(--transition), box-shadow var(--transition);
   cursor: pointer;
-  border: none;
+  border: 1px solid rgba(198,168,91,0.25);
   text-decoration: none;
 }
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 6px 28px rgba(212,168,67,0.38);
-  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(198,168,91,0.12);
 }
-.btn-primary:active:not(:disabled) {
-  transform: scale(0.98);
-}
-.btn-primary:disabled {
-  opacity: 0.38;
-  cursor: not-allowed;
-}
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* ─── Ghost Button ────────────────────────────────────────────────────── */
+/* ─── Ghost & Secondary Button ────────────────────────────────────────── */
 .btn-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
+  padding: 11px 22px;
   border-radius: var(--radius);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: var(--text-secondary);
-  font-weight: 600;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-weight: 500;
   font-size: 0.875rem;
   background: transparent;
-  transition: border-color var(--transition), color var(--transition), background var(--transition), transform var(--transition);
+  transition: border-color var(--transition), background var(--transition), transform var(--transition);
   cursor: pointer;
   text-decoration: none;
 }
 .btn-ghost:hover {
   border-color: var(--border-gold);
-  color: var(--gold-light);
-  background: var(--gold-dim);
-  transform: translateY(-1px);
+  background: var(--surface-1);
 }
 
 /* ─── Input Fields ────────────────────────────────────────────────────── */
 .gs-input {
   width: 100%;
-  background: var(--surface-0);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 10px;
+  background: var(--surface-1);
+  border: 1px solid rgba(31, 41, 51, 0.15);
+  border-radius: 8px;
   color: var(--text-primary);
   padding: 10px 14px;
   font-size: 0.875rem;
@@ -166,60 +155,49 @@ body {
 }
 .gs-input:focus {
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(212,168,67,0.12);
+  box-shadow: 0 0 0 3px rgba(198, 168, 91, 0.1);
 }
 .gs-input::placeholder { color: var(--text-muted); }
 
 /* ─── Upload Zone ─────────────────────────────────────────────────────── */
 .upload-zone {
-  border: 1.5px dashed rgba(255,255,255,0.14);
-  border-radius: 10px;
-  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  border: 1px dashed rgba(31, 41, 51, 0.12);
+  border-radius: 8px;
+  background: var(--surface-1);
+  transition: border-color var(--transition), background var(--transition);
   cursor: pointer;
 }
 .upload-zone:hover, .upload-zone.active {
   border-color: var(--gold);
-  background: rgba(212,168,67,0.04);
-  box-shadow: 0 0 0 3px rgba(212,168,67,0.08);
+  background: rgba(198, 168, 91, 0.03);
 }
 
 /* ─── Step Progress Bar ───────────────────────────────────────────────── */
 .step-dot {
-  width: 28px; height: 28px;
+  width: 26px; height: 26px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 11px; font-weight: 700;
-  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+  transition: background var(--transition), color var(--transition), border var(--transition);
+  border: 1px solid transparent;
 }
 .step-dot.active {
-  background: var(--gold);
-  color: #0D1117;
-  box-shadow: 0 0 0 4px rgba(212,168,67,0.2);
+  background: var(--surface-1);
+  border-color: var(--gold);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(198, 168, 91, 0.1);
 }
 .step-dot.done {
-  background: rgba(212,168,67,0.2);
-  color: var(--gold-light);
+  background: var(--success);
+  color: #FFF;
 }
 .step-dot.pending {
-  background: rgba(255,255,255,0.06);
+  background: var(--surface-2);
   color: var(--text-muted);
 }
 .step-line {
   flex: 1; height: 1px;
   transition: background var(--transition);
-}
-
-/* ─── Progress Bar Animated ───────────────────────────────────────────── */
-@keyframes progress-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(212,168,67,0.3); }
-  50%       { box-shadow: 0 0 20px rgba(212,168,67,0.6); }
-}
-.progress-bar-fill {
-  background: linear-gradient(90deg, #D4A843, #F0C060);
-  animation: progress-glow 2s ease-in-out infinite;
-  border-radius: 999px;
-  height: 100%;
-  transition: width 0.4s ease;
 }
 
 /* ─── Fade-in Page Transition ─────────────────────────────────────────── */
@@ -229,21 +207,21 @@ body {
 }
 .page-enter { animation: page-in 0.25s ease-out both; }
 
-/* ─── Badge ───────────────────────────────────────────────────────────── */
-.badge-pre  { background: rgba(52,211,153,0.12); color: #6EE7B7; ring: rgba(52,211,153,0.3); }
-.badge-warn { background: rgba(212,168,67,0.12); color: #FCD34D; ring: rgba(212,168,67,0.3); }
-.badge-ref  { background: rgba(239,68,68,0.12);  color: #FCA5A5; ring: rgba(239,68,68,0.3); }
+/* ─── Status Badges ────────────────────────────────────────────────────── */
+.badge-pre  { background: var(--success-bg); color: #437158; border: 1px solid rgba(122,157,140,0.3); }
+.badge-warn { background: var(--warning-bg); color: #8F722E; border: 1px solid rgba(198,168,91,0.4); } 
+.badge-ref  { background: var(--danger-bg);  color: #934646; border: 1px solid rgba(183,110,110,0.3); }
 
 /* ─── Scrollbar ───────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(212,168,67,0.3); }
+::-webkit-scrollbar-thumb { background: rgba(31, 41, 51, 0.15); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(31, 41, 51, 0.3); }
 
 /* ─── Select ──────────────────────────────────────────────────────────── */
 select.gs-input {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%233E4C59' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 36px;
@@ -258,7 +236,7 @@ select.gs-input {
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-weight: 500;
   letter-spacing: 0.02em;
 }

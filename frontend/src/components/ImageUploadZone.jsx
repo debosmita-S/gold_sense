@@ -74,7 +74,7 @@ export default function ImageUploadZone({
   return (
     <div
       className="rounded-xl overflow-hidden"
-      style={{ border: "1px solid rgba(255,255,255,0.07)", background: "rgba(13,21,38,0.5)" }}
+      style={{ border: "1px solid var(--border)", background: "var(--surface-1)" }}
     >
       {/* Header */}
       <div className="px-4 pt-4 pb-3 flex items-start justify-between gap-2">
@@ -86,14 +86,14 @@ export default function ImageUploadZone({
             {required ? (
               <span
                 className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-                style={{ background: "rgba(212,168,67,0.12)", color: "var(--gold)" }}
+                style={{ background: "rgba(212,168,67,0.1)", color: "var(--gold)" }}
               >
                 REQUIRED
               </span>
             ) : (
               <span
                 className="text-[10px] font-medium px-1.5 py-0.5 rounded"
-                style={{ background: "rgba(255,255,255,0.05)", color: "var(--text-muted)" }}
+                style={{ background: "var(--surface-0)", color: "var(--text-muted)" }}
               >
                 OPTIONAL
               </span>
@@ -127,7 +127,7 @@ export default function ImageUploadZone({
               className="flex h-10 w-10 items-center justify-center rounded-full"
               style={{
                 color: isDragActive ? "var(--gold)" : "var(--text-muted)",
-                background: isDragActive ? "rgba(212,168,67,0.1)" : "rgba(255,255,255,0.04)",
+                background: isDragActive ? "rgba(212,168,67,0.08)" : "rgba(31,41,51,0.04)",
                 transition: "all 0.22s ease",
               }}
             >
@@ -156,7 +156,7 @@ export default function ImageUploadZone({
         </div>
       ) : (
         <div className="px-3 pb-3">
-          <div className="relative overflow-hidden rounded-lg" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div className="relative overflow-hidden rounded-lg" style={{ border: "1px solid var(--border)" }}>
             <img
               src={preview}
               alt=""
@@ -184,7 +184,7 @@ export default function ImageUploadZone({
           <div className="mt-2 flex items-center gap-1.5 text-[11px]" style={{ color: "#6EE7B7" }}>
             <span
               className="flex h-4 w-4 items-center justify-center rounded-full"
-              style={{ background: "rgba(52,211,153,0.2)" }}
+              style={{ background: "var(--surface-0)" }}
             >
               <IconCheck />
             </span>

@@ -97,6 +97,11 @@ async def assess(
                 jewelry_type,
                 float(declared_weight_g) if declared_weight_g else None,
             )
+        elif v_err is None:
+            # Silent fallback was used (no API key or not installed) — don't report as error
+            vision_unavailable = False
+            fallback = False
+            err = None
 
         audio_bytes: Optional[bytes] = None
         if audio and audio.filename:

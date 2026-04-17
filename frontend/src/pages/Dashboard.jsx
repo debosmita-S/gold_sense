@@ -1,6 +1,9 @@
 import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import LendingSignalBadge from "../components/LendingSignalBadge.jsx";
+import SidePanel from "../components/SidePanel.jsx";
+import ConfidenceGauge from "../components/ConfidenceGauge.jsx";
+import RiskDonut from "../components/RiskDonut.jsx";
 
 /* ─── Icons ─────────────────────────────────────────────────────────────── */
 function IconX() {
@@ -47,7 +50,7 @@ function Counter({ to }) {
 /* ─── Skeleton row ───────────────────────────────────────────────────────── */
 function SkeletonRow() {
   return (
-    <div className="flex gap-3 px-3 py-2.5 items-center" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+    <div className="flex gap-3 px-3 py-2.5 items-center" style={{ borderBottom: "1px solid var(--border)" }}>
       <div className="skeleton h-3.5 w-20 rounded" />
       <div className="skeleton h-3.5 w-16 rounded" />
       <div className="skeleton h-3.5 flex-1 rounded" />
@@ -59,6 +62,7 @@ function SkeletonRow() {
 export default function Dashboard() {
   const [filter, setFilter] = useState("all");
   const [modal, setModal] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
 
   const rows = useMemo(() => {
     const stored = loadStored();
@@ -121,25 +125,52 @@ export default function Dashboard() {
         </div>
 
         {/* ── Stats ── */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-3">
-          {[
-            { label: "Assessments today", val: stats.total, accent: "var(--text-primary)", format: (v) => <Counter to={v} /> },
-            { label: "Pre-approved",       val: stats.prePct, accent: "#6EE7B7", format: (v) => <><Counter to={v} />%</> },
-            { label: "Flagged / Verify",   val: stats.flagPct, accent: "#FCD34D", format: (v) => <><Counter to={v} />%</> },
-          ].map((s) => (
-            <div key={s.label} className="gs-card p-5">
-              <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>{s.label}</p>
-              <p className="mt-2 text-2xl font-bold counter-animate" style={{ color: s.accent }}>
-                {s.format(s.val)}
-              </p>
+          <div className="mb-6">
+            <div className="gs-card flex items-center justify-between gap-4 px-4 py-3" style={{ marginBottom: 12 }}>
+              <div>
+                <p className="text-[11px] font-medium" style={{ color: "var(--text-muted)" }}>Assessments today</p>
+                <p className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}><Counter to={stats.total} /></p>
+              </div>
+              <div>
+                <p className="text-[11px] font-medium" style={{ color: "var(--text-muted)" }}>Approval rate</p>
+                <p className="text-2xl font-bold" style={{ color: "#6EE7B7" }}>{stats.prePct}%</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-medium" style={{ color: "var(--text-muted)" }}>Flagged</p>
+                <p className="text-2xl font-bold" style={{ color: "#FCD34D" }}>{stats.flagPct}%</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-medium" style={{ color: "var(--text-muted)" }}>Avg loan</p>
+                <p className="text-2xl font-bold" style={{ color: "var(--gold)" }}>₹{(Math.round((rows[0]?.payload?.fusion?.loan_value_min_inr || 7200))).toLocaleString("en-IN")}</p>
+              </div>
             </div>
-          ))}
-        </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {[
+              { label: "Assessments today", val: stats.total, accent: "var(--text-primary)", format: (v) => <Counter to={v} /> },
+              { label: "Pre-approved",       val: stats.prePct, accent: "#6EE7B7", format: (v) => <><Counter to={v} />%</> },
+              { label: "Flagged / Verify",   val: stats.flagPct, accent: "#FCD34D", format: (v) => <><Counter to={v} />%</> },
+            ].map((s) => (
+              <div key={s.label} className="gs-card p-3">
+                <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>{s.label}</p>
+                <p className="mt-2 text-2xl font-bold counter-animate" style={{ color: s.accent }}>
+                  {s.format(s.val)}
+                </p>
+              </div>
+            ))}
+            </div>
+          </div>
+
+          {/* Analytics strip */}
+          <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <ConfidenceGauge pct={78} />
+            <RiskDonut low={62} medium={28} high={10} />
+          </div>
 
         {/* ── Filter tabs ── */}
         <div className="mb-4 flex flex-wrap gap-2">
           {FILTERS.map(([k, lab]) => (
-            <button
+                <button
               key={k}
               type="button"
               onClick={() => setFilter(k)}
@@ -147,8 +178,8 @@ export default function Dashboard() {
               style={
                 filter === k
                   ? { background: "var(--gold)", color: "#0D1117" }
-                  : { background: "rgba(255,255,255,0.05)", color: "var(--text-muted)", border: "1px solid rgba(255,255,255,0.07)" }
-              }
+                  : { background: "var(--surface-1)", color: "var(--text-muted)", border: "1px solid var(--border)" }
+            }
             >
               {lab}
             </button>
@@ -156,11 +187,11 @@ export default function Dashboard() {
         </div>
 
         {/* ── Table ── */}
-        <div className="overflow-hidden rounded-xl" style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="overflow-hidden rounded-xl" style={{ border: "1px solid var(--border)" }}>
           {/* Table head */}
           <div
             className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1.4fr_1fr] gap-0 px-3 py-2.5 text-[10px] uppercase tracking-widest font-semibold"
-            style={{ background: "rgba(13,21,38,0.8)", color: "var(--text-muted)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+            style={{ background: "var(--surface-0)", color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}
           >
             <span>ID</span><span>Type</span><span>Weight</span><span>Purity</span><span>Risk</span><span>Signal</span><span>Time</span>
           </div>
@@ -172,23 +203,54 @@ export default function Dashboard() {
           )}
 
           {rows.map((r) => (
-            <div
-              key={r.id}
-              onClick={() => setModal(r)}
-              className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1.4fr_1fr] gap-0 px-3 py-3 items-center cursor-pointer transition-colors text-xs"
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", color: "var(--text-secondary)" }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(212,168,67,0.03)"}
-              onMouseLeave={e => e.currentTarget.style.background = ""}
-            >
-              <span className="font-mono text-[11px]" style={{ color: "var(--text-muted)" }}>{r.id.slice(0, 8)}…</span>
-              <span className="capitalize font-medium" style={{ color: "var(--text-primary)" }}>{r.jewelry_type}</span>
-              <span>{r.weight_band}</span>
-              <span style={{ color: "var(--text-muted)" }}>{r.purity}</span>
-              <span className="font-semibold" style={{ color: RISK_COLOR[r.risk] || "var(--text-secondary)" }}>{r.risk}</span>
-              <span><LendingSignalBadge signal={r.signal} /></span>
-              <span style={{ color: "var(--text-muted)" }}>
-                {r.timestamp ? new Date(r.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "—"}
-              </span>
+            <div key={r.id}>
+              <div
+                onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
+                className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1.4fr_1fr] gap-0 px-3 py-2.5 items-center cursor-pointer transition-colors text-xs"
+                style={{ borderBottom: "1px solid var(--border)", color: "var(--text-secondary)" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(198,168,91,0.06)"}
+                onMouseLeave={e => e.currentTarget.style.background = ""}
+              >
+                <span className="font-mono text-[11px]" style={{ color: "var(--text-muted)" }}>{r.id.slice(0, 8)}…</span>
+                <span className="capitalize font-medium" style={{ color: "var(--text-primary)" }}>{r.jewelry_type}</span>
+                <span>{r.weight_band}</span>
+                <span style={{ color: "var(--text-muted)" }}>{r.purity}</span>
+                <span className="font-semibold" style={{ color: RISK_COLOR[r.risk] || "var(--text-secondary)" }}>{r.risk}</span>
+                <span><LendingSignalBadge signal={r.signal} /></span>
+                <span style={{ color: "var(--text-muted)", display: "flex", justifyContent: "flex-end", gap: 8, alignItems: "center" }}>
+                  <span>{r.timestamp ? new Date(r.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "—"}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setModal(r); }}
+                    className="text-[11px] font-semibold px-2 py-1 rounded"
+                    style={{ background: "var(--surface-1)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                  >
+                    Details
+                  </button>
+                </span>
+              </div>
+
+              {expandedId === r.id && (
+                <div key={r.id + "-exp"} className="px-4 py-3" style={{ background: "var(--surface-0)", borderBottom: "1px solid var(--border)" }}>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-[12px] font-semibold" style={{ color: "var(--text-primary)" }}>Purity</p>
+                      <p className="text-sm" style={{ color: "var(--text-muted)" }}>{r.payload?.fusion?.purity_band || "—"} — {Math.round((r.payload?.fusion?.purity_confidence || 0) * 100)}%</p>
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-semibold" style={{ color: "var(--text-primary)" }}>Weight</p>
+                      <p className="text-sm" style={{ color: "var(--text-muted)" }}>{r.payload?.weight?.weight_min_g ?? "—"}g – {r.payload?.weight?.weight_max_g ?? "—"}g • {Math.round((r.payload?.fusion?.weight_confidence || 0) * 100)}%</p>
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-semibold" style={{ color: "var(--text-primary)" }}>Auth. Score</p>
+                      <p className="text-sm" style={{ color: "var(--text-muted)" }}>{Math.round((r.payload?.fusion?.authenticity_score || 0) * 100)}%</p>
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-semibold" style={{ color: "var(--text-primary)" }}>Flags</p>
+                      <p className="text-sm" style={{ color: "var(--text-muted)" }}>{(r.payload?.fusion?.fraud_flags || []).join(", ") || "None"}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -199,61 +261,7 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* ── Modal ── */}
-      {modal && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
-          style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
-          onClick={() => setModal(null)}
-        >
-          <div
-            className="w-full max-w-lg rounded-2xl p-6 shadow-2xl page-enter"
-            style={{ background: "var(--surface-1)", border: "1px solid rgba(255,255,255,0.09)", maxHeight: "85vh", overflowY: "auto" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-2 mb-4">
-              <div>
-                <h2 className="text-base font-bold" style={{ color: "var(--text-primary)" }}>Assessment detail</h2>
-                <p className="mt-0.5 font-mono text-[11px]" style={{ color: "var(--text-muted)" }}>{modal.id}</p>
-              </div>
-              <button type="button" onClick={() => setModal(null)} style={{ color: "var(--text-muted)" }}
-                onMouseEnter={e => e.target.style.color = "var(--text-primary)"}
-                onMouseLeave={e => e.target.style.color = "var(--text-muted)"}
-              >
-                <IconX />
-              </button>
-            </div>
-
-            <div className="mb-4 flex flex-wrap gap-2">
-              <LendingSignalBadge signal={modal.signal} />
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.06)", color: "var(--text-secondary)" }}>
-                Risk: {modal.risk}
-              </span>
-            </div>
-
-            {modal.payload ? (
-              <pre
-                className="rounded-xl p-3 text-[10px] overflow-auto max-h-64"
-                style={{ background: "var(--surface-0)", color: "var(--text-muted)" }}
-              >
-                {JSON.stringify(modal.payload.fusion || modal.payload, null, 2)}
-              </pre>
-            ) : (
-              <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                Demo row — run a live assessment to store full JSON.
-              </p>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setModal(null)}
-              className="btn-primary w-full mt-5"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <SidePanel open={Boolean(modal)} data={modal} onClose={() => setModal(null)} />
     </div>
   );
 }

@@ -64,7 +64,7 @@ export default function AudioRecorder({ audioBlob, onBlob, skipAudio, onSkipChan
   return (
     <div
       className="rounded-xl p-4"
-      style={{ background: "rgba(13,21,38,0.5)", border: "1px solid rgba(255,255,255,0.07)" }}
+      style={{ background: "var(--surface-1)", border: "1px solid var(--border)" }}
     >
       <p className="text-[10px] uppercase tracking-widest font-semibold mb-3" style={{ color: "var(--text-muted)" }}>
         Tap test audio
@@ -109,7 +109,7 @@ export default function AudioRecorder({ audioBlob, onBlob, skipAudio, onSkipChan
 
       {/* Progress bar when recording */}
       {status === "recording" && (
-        <div className="mt-3 overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,0.06)", height: 4 }}>
+        <div className="mt-3 overflow-hidden rounded-full" style={{ background: "rgba(31,41,51,0.06)", height: 4 }}>
           <div
             className="h-full rounded-full transition-all"
             style={{ width: `${(elapsed / 3) * 100}%`, background: "linear-gradient(90deg,#EF4444,#FCA5A5)", transition: "width 1s linear" }}
