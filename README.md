@@ -3,6 +3,29 @@
 Fintech-grade prototype: **remote gold jewelry assessment** for NBFC gold lending — React (Vite) + FastAPI + Gemini Vision + librosa audio features.
 Features a premium dark-themed UI, robust `.env` API credential isolation, and live integrations for real-time gold pricing with active fallbacks.
 
+## 🚀 Quick Start
+
+### Start Backend Server
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS/Linux
+pip install -r requirements.txt
+
+# Create .env file with your API keys (see Prerequisites)
+uvicorn main:app --reload --port 8000
+```
+
+### Start Frontend Server (in a new terminal)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open your browser to `http://localhost:5173` — the dev server automatically proxies `/api` to the backend.
+
 ## Prerequisites
 
 - **Node.js 18+** (for the frontend)
@@ -65,3 +88,12 @@ See repository `goldsense-ai/` — `backend/` modules (`vision`, `audio`, `weigh
 
 - Outputs are **bands and confidence scores**, not exact purity or weight.
 - This is a **prototype**, not a regulatory-compliant appraisal.
+
+## Recent Updates
+
+- ✅ **UI/UX Improvements**: Refined dark-themed interface with enhanced user experience
+- ✅ **Gemini Vision API Integration**: Replaced with Gemini for advanced image analysis
+- ✅ **PDF Report Export**: Generate and download assessment reports as PDF (via jsPDF)
+- ✅ **Enhanced Assessment Flow**: Overhauled calculation UI for better clarity and accuracy
+- ✅ **Real-time Gold Pricing**: Live INR gold price with automatic fallback to ₹7200/g
+
