@@ -1,13 +1,13 @@
 # GoldSense AI
 
-Fintech-grade prototype: **remote gold jewelry assessment** for NBFC gold lending — React (Vite) + FastAPI + Claude Vision + librosa audio features.
+Fintech-grade prototype: **remote gold jewelry assessment** for NBFC gold lending — React (Vite) + FastAPI + Gemini Vision + librosa audio features.
 Features a premium dark-themed UI, robust `.env` API credential isolation, and live integrations for real-time gold pricing with active fallbacks.
 
 ## Prerequisites
 
 - **Node.js 18+** (for the frontend)
 - **Python 3.11** (for the backend)
-- **Anthropic API key** for vision (`ANTHROPIC_API_KEY`)
+- **Google Gemini API key** for vision (`GEMINI_API_KEY`) — Free tier available at https://aistudio.google.com
 - Optional: `GOLDAPI_IO_KEY` or `METALPRICEAPI_KEY` for live INR gold price (otherwise **₹7200/g** fallback)
 
 ## Backend
@@ -22,7 +22,7 @@ pip install -r requirements.txt
 
 Create a `.env` file in the `backend` directory with your API keys:
 ```env
-ANTHROPIC_API_KEY=your_anthropic_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 GOLDAPI_IO_KEY=optional_goldapi_key
 METALPRICEAPI_KEY=optional_metalpriceapi_key
 ```
