@@ -1,6 +1,7 @@
 # GoldSense AI
 
-Hackathon prototype: **remote gold jewelry assessment** for NBFC gold lending — React (Vite) + FastAPI + Claude Vision + librosa audio features.
+Fintech-grade prototype: **remote gold jewelry assessment** for NBFC gold lending — React (Vite) + FastAPI + Claude Vision + librosa audio features.
+Features a premium dark-themed UI, robust `.env` API credential isolation, and live integrations for real-time gold pricing with active fallbacks.
 
 ## Prerequisites
 
@@ -17,7 +18,17 @@ python -m venv .venv
 .venv\Scripts\activate          # Windows
 # source .venv/bin/activate     # macOS/Linux
 pip install -r requirements.txt
-set ANTHROPIC_API_KEY=sk-ant-...   # Windows cmd
+```
+
+Create a `.env` file in the `backend` directory with your API keys:
+```env
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+GOLDAPI_IO_KEY=optional_goldapi_key
+METALPRICEAPI_KEY=optional_metalpriceapi_key
+```
+
+Run the backend server:
+```bash
 uvicorn main:app --reload --port 8000
 ```
 
